@@ -1,0 +1,21 @@
+at2
+bro - Qual a Bronca?
+cid - Cidades
+cit - Ciência e Tecnologia
+con2 - Concursos
+eco - Economia
+ept - Esportes
+esp - Especial
+fam - Família
+imo - Imóveis
+inf - Informática
+int - Internacional
+mic - Minha Casa
+mul - Mulher
+opi - Opiniao
+poc - Policia
+pot - Política
+reg - Regional
+sro - Sobre Rodas
+tav - Tudo a Ver
+tvt - TV Tudo;
