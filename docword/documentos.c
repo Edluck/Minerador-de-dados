@@ -15,12 +15,24 @@ struct
     indice_documentos *idx_documentos;
 }documentos;
 
-Documentos* documentos_constroi() {
-
-    return NULL;
+// Verifica se abriu corretamente o arquivo antes do programa
+void documentos_verifica_se_abriu_arquivo(char argv[]) {
+    FILE* arq;
+    arq = fopen(argv, "r");
+    if(!arq) {
+        printf("Erro ao tentar abrir o arquivo!\n");
+        exit(1);
+    }
+    fclose(arq);
 }
 
-void documentos_destroi() {
+Documentos* documentos_constroi() {
+    Documentos *d = (Documentos*)calloc(1, sizeof(Documentos));
+    
+    return d;
+}
 
-
+void documentos_destroi(Documentos* d) {
+    
+    free(d);
 }

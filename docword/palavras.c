@@ -19,6 +19,7 @@ Palavras* palavras_constroi() {
     return NULL;
 }
 
-void palavras_destroi() {
+void palavras_destroi(Palavras *p) {
 
+    free(p);
 }

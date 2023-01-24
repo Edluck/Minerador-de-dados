@@ -4,7 +4,9 @@
 typedef struct documentos *Documentos;
 
 Documentos* documentos_constroi();
+void documentos_destroi(Documentos* d);
 
-void documentos_destroi();
+void documentos_verifica_se_abriu_arquivo(char argv[]);
+
 
 #endif
