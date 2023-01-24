@@ -1,5 +1,9 @@
 # Prerequisites
 *.d
+datasets/large/
+datasets/medium-large/
+datasets/mediu-small/
+datasets/small/
 
 # Object files
 *.o
