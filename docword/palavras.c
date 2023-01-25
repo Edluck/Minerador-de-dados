@@ -15,8 +15,9 @@ struct {
 }palavras;
 
 Palavras* palavras_constroi() {
-
-    return NULL;
+    Palavras *p = (Palavras*)calloc(1, sizeof(Palavras));
+    
+    return p;
 }
 
 void palavras_destroi(Palavras *p) {
