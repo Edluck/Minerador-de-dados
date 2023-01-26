@@ -1,5 +1,5 @@
-#include "docword/palavras.h"
-#include "docword/documentos.h"
+#include "palavras.h"
+#include "documentos.h"
 #include <stdio.h>
 #include <stdlib.h>
 
