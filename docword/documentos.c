@@ -12,9 +12,9 @@ struct documentos
 {
     char *nome;
     char *classe;
-    int posicao_vetor_documentos;
-    int tam_vet_idx_documentos;
+
     indice_documentos *idx_documentos;
+    int tam_vet_idx_documentos;
 };
 
 int tam_vet_limite_documento = 10;
@@ -39,11 +39,12 @@ Documentos* documentos_constroi(char train[]) {
     while(!feof(train_txt)) {
         if(tam_vet_atual_documento >= tam_vet_limite_documento) {
             tam_vet_limite_documento+=5;
-            printf("\nrealocando\n");
+            printf("expandindo tamanho total de documentos...\n");
             d = (Documentos*)realloc(d,tam_vet_limite_documento*sizeof(Documentos));
         }
         d[tam_vet_atual_documento] = (Documentos)calloc(1, sizeof(struct documentos));
         d[tam_vet_atual_documento]->idx_documentos = (indice_documentos*)calloc(1,sizeof(indice_documentos));
+        d[tam_vet_atual_documento]->tam_vet_idx_documentos = 1;
         d[tam_vet_atual_documento]->classe = (char*)calloc(5, sizeof(char));
 
         fscanf(train_txt,"%s %s\n", nome_aux, d[tam_vet_atual_documento]->classe);
@@ -52,7 +53,7 @@ Documentos* documentos_constroi(char train[]) {
     }
     for (int i = 0; i < tam_vet_atual_documento; i++)
     {
-        printf("Documento: %d | Nome: %s | classe: %s\n", i+1, d[i]->nome, d[i]->classe);
+        printf("Documento: %d | Nome: %s | Classe: %s\n", i+1, d[i]->nome, d[i]->classe);
     }
     
 

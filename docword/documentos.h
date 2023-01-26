@@ -3,6 +3,7 @@
 
 typedef struct documentos *Documentos;
 
+
 Documentos* documentos_constroi(char train[]);
 void documentos_destroi(Documentos* d);
 
