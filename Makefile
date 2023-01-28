@@ -9,8 +9,8 @@ OBJS = $(SRCS:.c=.o)
 libdocword.a: $(SRCS) $(OBJS)
 	@gcc -c docword/documentos.c -o docword/documentos.o $(CFLAGS)
 	@gcc -c docword/palavras.c -o docword/palavras.o $(CFLAGS)
-	@gcc -c docword/hash.c -o docword/hash.o $(CFLAGS)
-	@ar -crs libdocword.a docword/documentos.o docword/palavras.o docword/hash.o
+	@gcc -c docword/organiza_arq.c -o docword/organiza_arq.o $(CFLAGS)
+	@ar -crs libdocword.a docword/documentos.o docword/palavras.o docword/organiza_arq.o
 
 maker_index: libdocword.a indexbuilder.c
 	$(CC) -o indexbuild indexbuilder.c -I docword -L . -ldocword $(CFLAGS) -lm

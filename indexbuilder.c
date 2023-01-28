@@ -1,6 +1,6 @@
 #include "palavras.h"
 #include "documentos.h"
-#include "hash.h"
+#include "organiza_arq.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -15,14 +15,16 @@ int main (int argc, char *argv[]) {
     // alocando o espaco inicial
    Documentos *d = documentos_constroi(argv[1]);
    Palavras *p = palavras_constroi();
-   Hash *h = hash_constroi();
-    //funcoes para construcao do indice
-    hash_preenche_vetor_idx_palavras(h,d,p);
+
+   int tam_vet_doc = documentos_retorna_tam_atual_vet(), tam_vet_pal = palavras_retorna_tam_atual_vet(), tam_vet_limite_pal = palavras_retorna_tam_limite_vet();
+ 
+   //funcoes para construcao do indice
+   p = documento_palavra_constroi_indice(d, p, tam_vet_doc, tam_vet_pal, tam_vet_limite_pal);
+   palavras_imprime_informacao(p);
 
    // free no que foi alocado 
    documentos_destroi(d);
    palavras_destroi(p); 
-   hash_destroi(h);
 
    fclose(index_bynarie); 
     return 0;
