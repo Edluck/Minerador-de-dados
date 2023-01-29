@@ -86,8 +86,8 @@ void documentos_imprime_informacao(Documentos *d)
     FILE *ind_doc = fopen("ind_doc.txt", "w");
     for (int i = 0; i < tam_vet_atual_documento; i++)
     {
-        fprintf(ind_doc, "%d;%s;%s;%d|", i, d[i]->nome, d[i]->classe, d[i]->tam_vet_idx_documentos);
-        for (int j = 0; j < d[i]->tam_vet_idx_documentos-1; j++)
+        fprintf(ind_doc, "%d;%s;%s;%d:", i, d[i]->nome, d[i]->classe, d[i]->tam_vet_idx_documentos);
+        for (int j = 0; j < d[i]->tam_vet_idx_documentos - 1; j++)
         {
             fprintf(ind_doc, "%d|%d|", d[i]->idx_documentos[j].posicao_palavra, d[i]->idx_documentos[j].frequencia_palavra_documento);
         }
@@ -96,12 +96,21 @@ void documentos_imprime_informacao(Documentos *d)
     fclose(ind_doc);
 }
 
-void documentos_constroi_binario_inf_doc(Documentos* d,FILE *index_bynarie) {
+void documentos_constroi_binario_inf_doc(Documentos *d, FILE *index_bynarie)
+{
+    fwrite(&tam_vet_atual_documento, sizeof(int), 1, index_bynarie);
     for (int i = 0; i < tam_vet_atual_documento; i++)
     {
-        
+        int tam_nome = strlen(d[i]->nome), tam_class = strlen(d[i]->classe);
+        fwrite(d[i]->nome, sizeof(char), tam_nome+1, index_bynarie);
+        fwrite(d[i]->classe, sizeof(char), tam_class+1, index_bynarie);
+        fwrite(&d[i]->tam_vet_idx_documentos, sizeof(int), 1, index_bynarie);
+        for (int j = 0; j < d[i]->tam_vet_idx_documentos - 1; j++)
+        {
+            fwrite(&d[i]->idx_documentos[j].frequencia_palavra_documento, sizeof(int), 1, index_bynarie);
+            fwrite(&d[i]->idx_documentos[j].posicao_palavra, sizeof(int), 1, index_bynarie);
+        }
     }
-    
 }
 
 void documentos_destroi(Documentos *d)

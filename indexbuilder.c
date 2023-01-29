@@ -26,11 +26,12 @@ int main(int argc, char *argv[])
     organiza_arq_constroi_indice_documento(d, p, tam_vet_doc, tam_vet_pal);
     palavras_imprime_informacao(p);
     documentos_imprime_informacao(d);
+
+    // constroi binario
+     organiza_arq_constroi_binario(d,p, index_bynarie);
     // free no que foi alocado
     documentos_destroi(d);
     palavras_destroi(p);
-
-    // organiza_arq_constroi_binario(d,p, index_bynarie);
 
     fclose(index_bynarie);
     return 0;

@@ -58,32 +58,34 @@ void organiza_arq_constroi_indice_documento(Documentos *d, Palavras *p, int tam_
         }
     }
 }
-float organiza_arq_fator_ponderacao(int n_total_docs, int n_docs_p_aparece) {
+float organiza_arq_fator_ponderacao(int n_total_docs, int n_docs_p_aparece)
+{
     float idf = 0;
 
-    idf = (log((1.0+n_total_docs)/(1.0+n_docs_p_aparece))) + 1.0;
+    idf = (log((1.0 + n_total_docs) / (1.0 + n_docs_p_aparece))) + 1.0;
 
     return idf;
 }
 
-void organiza_arq_calcula_tfidf_palavra(Palavras *p,int n_total_doc,int tam_vet_pal) {
+void organiza_arq_calcula_tfidf_palavra(Palavras *p, int n_total_doc, int tam_vet_pal)
+{
     float tfidf = 0, idf = 0;
     for (int i = 0; i < tam_vet_pal; i++)
     {
         int tam_vet_idx_pal = palavras_retorna_tam_atual_vet_idx_palavras(p[i]);
         for (int j = 0; j < tam_vet_idx_pal; j++)
-        {   
+        {
             int freq_no_doc = palavras_retorna_freq_doc_da_palavra(p[i], j);
             idf = organiza_arq_fator_ponderacao(n_total_doc, tam_vet_idx_pal);
-            tfidf = freq_no_doc*idf;
+            tfidf = freq_no_doc * idf;
             palavras_atribui_tfidf_estrutura(p, tfidf, i, j);
         }
-
     }
-    
 }
 
-void organiza_arq_constroi_binario(Documentos *d,Palavras *p, FILE *index_bynarie) {
+void organiza_arq_constroi_binario(Documentos *d, Palavras *p, FILE *index_bynarie)
+{
+    // primeiro documento, depois palavras para o arq binario
     documentos_constroi_binario_inf_doc(d, index_bynarie);
-     palavras_constroi_binario_inf_pal(p,index_bynarie);
+    palavras_constroi_binario_inf_pal(p, index_bynarie);
 }

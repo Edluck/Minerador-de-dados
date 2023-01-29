@@ -74,7 +74,7 @@ void palavras_imprime_informacao(Palavras *p)
     FILE *out = fopen("ind_pal.txt", "w");
     for (int i = 0; i < tam_vet_atual_palavra_global; i++)
     {
-        fprintf(out, "%d;%s|", i, p[i]->nome);
+        fprintf(out, "%d;%s:", i, p[i]->nome);
         for (int j = 0; j < p[i]->tam_vet_idx_palavras; j++)
         {
             fprintf(out, "%d|%d|%.02f|", p[i]->idx_palavras[j].frequencia_no_documento, p[i]->idx_palavras[j].indice_documentos, p[i]->idx_palavras[j].tf_idf);
@@ -133,7 +133,20 @@ void palavras_ordena_vetor(Palavras *p, int tam_vet_atual_pal)
 
 
 void palavras_constroi_binario_inf_pal(Palavras *p,FILE *index_bynarie) {
-
+     fwrite(&tam_vet_atual_palavra_global,sizeof(int), 1, index_bynarie);
+     for (int i = 0; i < tam_vet_atual_palavra_global; i++)
+    {
+        int tam_nome = strlen(p[i]->nome);
+       fwrite(p[i]->nome,sizeof(char),tam_nome+1,index_bynarie);
+       fwrite(&p[i]->tam_vet_idx_palavras,sizeof(int),1,index_bynarie);
+        for (int j = 0; j < p[i]->tam_vet_idx_palavras; j++)
+        {
+           fwrite(&p[i]->idx_palavras[j].frequencia_no_documento,sizeof(int),1,index_bynarie);
+           fwrite(&p[i]->idx_palavras[j].indice_documentos,sizeof(int),1,index_bynarie);
+           fwrite(&p[i]->idx_palavras[j].tf_idf,sizeof(float),1,index_bynarie);
+        }
+        
+    }
 }
 
 void palavra_destroi_vetor_palavra(Palavras p)
