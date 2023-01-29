@@ -5,7 +5,7 @@
 
 typedef struct
 {
-    int posicao_palavra_documento;
+    int posicao_palavra;
     int frequencia_palavra_documento;
 } indice_documentos;
 
@@ -61,14 +61,47 @@ Documentos *documentos_constroi(char train[])
     return d;
 }
 
-int documentos_retorna_tam_atual_vet() {
+int documentos_retorna_tam_atual_vet()
+{
     return tam_vet_atual_documento;
 }
 
-void documentos_retorna_nome_arq(Documentos d, char *nome_arq[]) {
+void documentos_retorna_nome_arq(Documentos d, char *nome_arq[])
+{
     int tam = strlen(d->nome);
-    *(nome_arq) = (char*)realloc(*(nome_arq), (tam+1)*sizeof(char));
-    strcpy( *(nome_arq),d->nome);
+    *(nome_arq) = (char *)realloc(*(nome_arq), (tam + 1) * sizeof(char));
+    strcpy(*(nome_arq), d->nome);
+}
+
+void documentos_preenche_vetor_idx_doc(Documentos *d, int ind_doc, int posica_pal, int freq)
+{
+    d[ind_doc]->idx_documentos[d[ind_doc]->tam_vet_idx_documentos - 1].posicao_palavra = posica_pal;
+    d[ind_doc]->idx_documentos[d[ind_doc]->tam_vet_idx_documentos - 1].frequencia_palavra_documento = freq;
+    d[ind_doc]->tam_vet_idx_documentos++;
+    d[ind_doc]->idx_documentos = (indice_documentos *)realloc(d[ind_doc]->idx_documentos, (d[ind_doc]->tam_vet_idx_documentos) * sizeof(indice_documentos));
+}
+
+void documentos_imprime_informacao(Documentos *d)
+{
+    FILE *ind_doc = fopen("ind_doc.txt", "w");
+    for (int i = 0; i < tam_vet_atual_documento; i++)
+    {
+        fprintf(ind_doc, "%d;%s;%s;%d|", i, d[i]->nome, d[i]->classe, d[i]->tam_vet_idx_documentos);
+        for (int j = 0; j < d[i]->tam_vet_idx_documentos-1; j++)
+        {
+            fprintf(ind_doc, "%d|%d|", d[i]->idx_documentos[j].posicao_palavra, d[i]->idx_documentos[j].frequencia_palavra_documento);
+        }
+        fprintf(ind_doc, "\n");
+    }
+    fclose(ind_doc);
+}
+
+void documentos_constroi_binario_inf_doc(Documentos* d,FILE *index_bynarie) {
+    for (int i = 0; i < tam_vet_atual_documento; i++)
+    {
+        
+    }
+    
 }
 
 void documentos_destroi(Documentos *d)
