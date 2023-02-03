@@ -14,7 +14,7 @@ Palavras *organiza_arq_constroi_indice_palavra(Documentos *d, Palavras *p, int t
     for (int i = 0; i < tam_vet_doc; i++)
     {
         documentos_retorna_nome_arq(d[i], &nome_arq);
-        sprintf(aux, "datasets/tiny/%s", nome_arq);
+        sprintf(aux, "datasets/small/%s", nome_arq);
         arq_train = fopen(aux, "r");
         while (!feof(arq_train))
         {
@@ -54,7 +54,8 @@ void organiza_arq_constroi_indice_documento(Documentos *d, Palavras *p, int tam_
         {
             int ind_doc = palavras_retorna_ind_doc_da_palavra(p[i], j);
             int freq_pal_doc = palavras_retorna_freq_doc_da_palavra(p[i], j);
-            documentos_preenche_vetor_idx_doc(d, ind_doc, i, freq_pal_doc);
+            float tfidf = palavras_retorna_tfidf(p[i],j);
+            documentos_preenche_vetor_idx_doc(d, ind_doc, i, freq_pal_doc, tfidf);
         }
     }
 }
@@ -86,6 +87,6 @@ void organiza_arq_calcula_tfidf_palavra(Palavras *p, int n_total_doc, int tam_ve
 void organiza_arq_constroi_binario(Documentos *d, Palavras *p, FILE *index_bynarie)
 {
     // primeiro documento, depois palavras para o arq binario
-    documentos_constroi_binario_inf_doc(d, index_bynarie);
-    palavras_constroi_binario_inf_pal(p, index_bynarie);
+    documentos_faz_binario_inf_doc(d, index_bynarie);
+    palavras_faz_binario_inf_pal(p, index_bynarie);
 }

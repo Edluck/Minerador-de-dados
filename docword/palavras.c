@@ -35,6 +35,50 @@ Palavras *palavras_constroi()
     return p;
 }
 
+Palavras *palavras_constroi_com_binario(FILE *bynarie) {
+    fread(&tam_vet_atual_palavra_global,sizeof(int), 1, bynarie);
+     Palavras *p = (Palavras*)calloc(tam_vet_atual_palavra_global, sizeof(Palavras));
+
+    for (int i = 0; i < tam_vet_atual_palavra_global; i++)
+    {   
+        p[i] = (Palavras)calloc(1, sizeof(struct palavras));
+        int tam_nome;
+         fread(&tam_nome,sizeof(int),1,bynarie);
+         p[i]->nome = (char*)malloc(tam_nome*sizeof(char));
+         fread(p[i]->nome, sizeof(char), tam_nome, bynarie);
+         fread(&p[i]->tam_vet_idx_palavras, sizeof(int), 1, bynarie);
+          p[i]->idx_palavras = (indice_palavras*)calloc(p[i]->tam_vet_idx_palavras,sizeof(indice_palavras));
+        for (int j = 0; j < p[i]->tam_vet_idx_palavras; j++)
+        {
+           fread(&p[i]->idx_palavras[j].frequencia_no_documento,sizeof(int),1,bynarie);
+           fread(&p[i]->idx_palavras[j].indice_documentos,sizeof(int),1,bynarie);
+           fread(&p[i]->idx_palavras[j].tf_idf,sizeof(float),1,bynarie);
+        }
+    }
+    
+
+    return p;
+}
+
+void palavras_faz_binario_inf_pal(Palavras *p,FILE *index_bynarie) {
+     fwrite(&tam_vet_atual_palavra_global,sizeof(int), 1, index_bynarie);
+     for (int i = 0; i < tam_vet_atual_palavra_global; i++)
+    {
+        int tam_nome = strlen(p[i]->nome) + 1;
+        fwrite(&tam_nome,sizeof(int),1,index_bynarie);
+       fwrite(p[i]->nome,sizeof(char),tam_nome,index_bynarie);
+       fwrite(&p[i]->tam_vet_idx_palavras,sizeof(int),1,index_bynarie);
+        for (int j = 0; j < p[i]->tam_vet_idx_palavras; j++)
+        {
+           fwrite(&p[i]->idx_palavras[j].frequencia_no_documento,sizeof(int),1,index_bynarie);
+           fwrite(&p[i]->idx_palavras[j].indice_documentos,sizeof(int),1,index_bynarie);
+           fwrite(&p[i]->idx_palavras[j].tf_idf,sizeof(float),1,index_bynarie);
+        }
+        
+    }
+}
+
+
 Palavras *palavras_realoca_vet(Palavras *p, int tam_limite)
 {
     p = (Palavras *)realloc(p, tam_limite * sizeof(Palavras));
@@ -66,6 +110,20 @@ int palavras_retorna_ind_doc_da_palavra(Palavras p, int j)
 int palavras_retorna_freq_doc_da_palavra(Palavras p, int j)
 {
     return p->idx_palavras[j].frequencia_no_documento;
+}
+float palavras_retorna_tfidf(Palavras p, int j) {
+    return p->idx_palavras[j].tf_idf;
+}
+Palavras palavras_verifica_se_existe(Palavras *p, char palavra[]) {
+    for (int i = 0; i < tam_vet_atual_palavra_global-1; i++)
+    {
+        if(strcmp(p[i]->nome, palavra) == 0) {
+            Palavras aux = p[i];
+            return aux;
+        }
+    }
+    return NULL;
+    
 }
 
 void palavras_imprime_informacao(Palavras *p)
@@ -130,24 +188,6 @@ void palavras_ordena_vetor(Palavras *p, int tam_vet_atual_pal)
  void palavras_atribui_tfidf_estrutura(Palavras *p,float tfidf,int ind,int ind_vet_idx) {
     p[ind]->idx_palavras[ind_vet_idx].tf_idf = tfidf;
  }
-
-
-void palavras_constroi_binario_inf_pal(Palavras *p,FILE *index_bynarie) {
-     fwrite(&tam_vet_atual_palavra_global,sizeof(int), 1, index_bynarie);
-     for (int i = 0; i < tam_vet_atual_palavra_global; i++)
-    {
-        int tam_nome = strlen(p[i]->nome);
-       fwrite(p[i]->nome,sizeof(char),tam_nome+1,index_bynarie);
-       fwrite(&p[i]->tam_vet_idx_palavras,sizeof(int),1,index_bynarie);
-        for (int j = 0; j < p[i]->tam_vet_idx_palavras; j++)
-        {
-           fwrite(&p[i]->idx_palavras[j].frequencia_no_documento,sizeof(int),1,index_bynarie);
-           fwrite(&p[i]->idx_palavras[j].indice_documentos,sizeof(int),1,index_bynarie);
-           fwrite(&p[i]->idx_palavras[j].tf_idf,sizeof(float),1,index_bynarie);
-        }
-        
-    }
-}
 
 void palavra_destroi_vetor_palavra(Palavras p)
 {

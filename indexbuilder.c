@@ -21,9 +21,10 @@ int main(int argc, char *argv[])
     // funcoes para construcao do indice
     p = organiza_arq_constroi_indice_palavra(d, p, tam_vet_doc, tam_vet_pal, tam_vet_limite_pal);
     tam_vet_pal = palavras_retorna_tam_atual_vet();
-
     organiza_arq_calcula_tfidf_palavra(p, tam_vet_doc, tam_vet_pal);
+    // construir indice do documento
     organiza_arq_constroi_indice_documento(d, p, tam_vet_doc, tam_vet_pal);
+    //funcoes de impressao de informacao para verificar integridade das informacoes(opcionais)
     palavras_imprime_informacao(p);
     documentos_imprime_informacao(d);
 
@@ -32,7 +33,6 @@ int main(int argc, char *argv[])
     // free no que foi alocado
     documentos_destroi(d);
     palavras_destroi(p);
-
     fclose(index_bynarie);
     return 0;
 }

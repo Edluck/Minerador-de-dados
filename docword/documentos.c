@@ -7,6 +7,7 @@ typedef struct
 {
     int posicao_palavra;
     int frequencia_palavra_documento;
+    float tf_idf;
 } indice_documentos;
 
 struct documentos
@@ -36,7 +37,7 @@ void documentos_verifica_se_abriu_arquivo(char argv[])
 Documentos *documentos_constroi(char train[])
 {
     FILE *train_txt;
-    char nome_aux[100] = "";
+    char nome_aux[100] = ""; // utilizado para pegar o tamanho exato do nome
     train_txt = fopen(train, "r");
     Documentos *d = (Documentos *)calloc(tam_vet_limite_documento, sizeof(Documentos));
 
@@ -61,6 +62,57 @@ Documentos *documentos_constroi(char train[])
     return d;
 }
 
+Documentos *documentos_constroi_com_binario(FILE *bynarie) {
+
+    fread(&tam_vet_atual_documento, sizeof(int), 1, bynarie);
+    Documentos *d = (Documentos *)calloc(tam_vet_atual_documento, sizeof(Documentos));
+    int tam_nome = 0, tam_classe = 0;
+    for (int i = 0; i < tam_vet_atual_documento; i++)
+    {
+        d[i] = (Documentos)calloc(1, sizeof(struct documentos));
+        fread(&tam_nome, sizeof(int), 1, bynarie);
+        fread(&tam_classe, sizeof(int), 1, bynarie);
+        d[i]->nome = (char*)malloc(tam_nome*sizeof(char));
+        d[i]->classe = (char*)malloc(tam_classe*sizeof(char));
+        fread(d[i]->nome, sizeof(char), tam_nome, bynarie);
+       
+        fread(d[i]->classe, sizeof(char), tam_classe, bynarie);
+        
+        fread(&d[i]->tam_vet_idx_documentos, sizeof(int), 1, bynarie);
+        d[i]->idx_documentos = (indice_documentos*)calloc(d[i]->tam_vet_idx_documentos, sizeof(indice_documentos));
+       
+        for (int j = 0; j < d[i]->tam_vet_idx_documentos - 1; j++)
+        {
+            fread(&d[i]->idx_documentos[j].frequencia_palavra_documento, sizeof(int), 1, bynarie);
+            fread(&d[i]->idx_documentos[j].posicao_palavra, sizeof(int), 1, bynarie);
+            fread(&d[i]->idx_documentos[j].tf_idf, sizeof(float), 1,bynarie);
+
+        }
+        
+    }
+    return d;
+}
+
+void documentos_faz_binario_inf_doc(Documentos *d, FILE *index_bynarie)
+{
+    fwrite(&tam_vet_atual_documento, sizeof(int), 1, index_bynarie);
+    for (int i = 0; i < tam_vet_atual_documento; i++)
+    {
+        int tam_nome = strlen(d[i]->nome) +1, tam_class = strlen(d[i]->classe) +1;
+        fwrite(&tam_nome,sizeof(int),1,index_bynarie);
+        fwrite(&tam_class,sizeof(int),1,index_bynarie);
+        fwrite(d[i]->nome, sizeof(char), tam_nome, index_bynarie);
+        fwrite(d[i]->classe, sizeof(char), tam_class, index_bynarie);
+        fwrite(&d[i]->tam_vet_idx_documentos, sizeof(int), 1, index_bynarie);
+        for (int j = 0; j < d[i]->tam_vet_idx_documentos - 1; j++)
+        {
+            fwrite(&d[i]->idx_documentos[j].frequencia_palavra_documento, sizeof(int), 1, index_bynarie);
+            fwrite(&d[i]->idx_documentos[j].posicao_palavra, sizeof(int), 1, index_bynarie);
+            fwrite(&d[i]->idx_documentos[j].tf_idf, sizeof(float), 1,index_bynarie);
+        }
+    }
+}
+
 int documentos_retorna_tam_atual_vet()
 {
     return tam_vet_atual_documento;
@@ -73,10 +125,11 @@ void documentos_retorna_nome_arq(Documentos d, char *nome_arq[])
     strcpy(*(nome_arq), d->nome);
 }
 
-void documentos_preenche_vetor_idx_doc(Documentos *d, int ind_doc, int posica_pal, int freq)
+void documentos_preenche_vetor_idx_doc(Documentos *d, int ind_doc, int posica_pal, int freq, float tfidf)
 {
     d[ind_doc]->idx_documentos[d[ind_doc]->tam_vet_idx_documentos - 1].posicao_palavra = posica_pal;
     d[ind_doc]->idx_documentos[d[ind_doc]->tam_vet_idx_documentos - 1].frequencia_palavra_documento = freq;
+    d[ind_doc]->idx_documentos[d[ind_doc]->tam_vet_idx_documentos - 1].tf_idf = tfidf;
     d[ind_doc]->tam_vet_idx_documentos++;
     d[ind_doc]->idx_documentos = (indice_documentos *)realloc(d[ind_doc]->idx_documentos, (d[ind_doc]->tam_vet_idx_documentos) * sizeof(indice_documentos));
 }
@@ -89,28 +142,15 @@ void documentos_imprime_informacao(Documentos *d)
         fprintf(ind_doc, "%d;%s;%s;%d:", i, d[i]->nome, d[i]->classe, d[i]->tam_vet_idx_documentos);
         for (int j = 0; j < d[i]->tam_vet_idx_documentos - 1; j++)
         {
-            fprintf(ind_doc, "%d|%d|", d[i]->idx_documentos[j].posicao_palavra, d[i]->idx_documentos[j].frequencia_palavra_documento);
+            fprintf(ind_doc, "%d|%d|%f|", d[i]->idx_documentos[j].posicao_palavra, d[i]->idx_documentos[j].frequencia_palavra_documento, d[i]->idx_documentos[j].tf_idf);
         }
         fprintf(ind_doc, "\n");
     }
     fclose(ind_doc);
 }
 
-void documentos_constroi_binario_inf_doc(Documentos *d, FILE *index_bynarie)
-{
-    fwrite(&tam_vet_atual_documento, sizeof(int), 1, index_bynarie);
-    for (int i = 0; i < tam_vet_atual_documento; i++)
-    {
-        int tam_nome = strlen(d[i]->nome), tam_class = strlen(d[i]->classe);
-        fwrite(d[i]->nome, sizeof(char), tam_nome+1, index_bynarie);
-        fwrite(d[i]->classe, sizeof(char), tam_class+1, index_bynarie);
-        fwrite(&d[i]->tam_vet_idx_documentos, sizeof(int), 1, index_bynarie);
-        for (int j = 0; j < d[i]->tam_vet_idx_documentos - 1; j++)
-        {
-            fwrite(&d[i]->idx_documentos[j].frequencia_palavra_documento, sizeof(int), 1, index_bynarie);
-            fwrite(&d[i]->idx_documentos[j].posicao_palavra, sizeof(int), 1, index_bynarie);
-        }
-    }
+void documentos_imprime_recomendacoes(int i,int ind, float tfidf, Documentos* d) {
+    printf("%d - %s,Classe: %s e Soma tfidf: %.04f\n", i, d[ind]->nome, d[ind]->classe, tfidf);
 }
 
 void documentos_destroi(Documentos *d)
